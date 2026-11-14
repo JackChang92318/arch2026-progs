@@ -11,6 +11,49 @@
     .type   gcd_u32_asm, @function
     .align  2
 gcd_u32_asm:
-    li      a0, 0
+    mv    a5,a0 
+    beqz  a0, RET_B
+    beqz  a1, RET
+    or    a0,a0,a1 
+    andi  a0,a0,1
+    bnez  a0, SHIFT0
+COMMON:
+    srli  a5,a5,1
+    srli  a1,a1,1 
+    or    a4,a5,a1
+    andi  a4,a4,1
+    addi  a0,a0,1 
+    beqz  a4, COMMON
+ODD_A:
+    andi  a4,a5,1
+    bnez  a4, LOOP
+STRIP_A:
+    srli  a5,a5,1
+    andi  a4,a5,1
+    beqz  a4, STRIP_A
+LOOP:
+    andi  a4,a1,1
+    bnez  a4, SUB
+HALF_B:
+    srli  a1,a1,1
+    andi  a4,a1,1
+    beqz  a4, HALF_B
+SUB:
+    sub   a4,a5,a1
+    bgeu  a1,a5, NO_SWAP
+    mv    a5,a1
+    mv    a1,a4
+    j     HALF_B
+RET_B:
+    mv    a0,a1
+RET:
     ret
+NO_SWAP:
+    sub   a1,a1,a5
+    bnez  a1, HALF_B
+    sll   a0,a5,a0
+    ret
+SHIFT0:
+    li    a0,0
+    j     ODD_A
     .size   gcd_u32_asm, .-gcd_u32_asm
