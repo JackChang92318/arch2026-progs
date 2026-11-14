@@ -33,25 +33,36 @@ STRIP_A:
     beqz  a4, STRIP_A
 LOOP:
     andi  a4,a1,1
-    bnez  a4, SUB
-HALF_B:
+    bnez  a4, SUB1
+HALF_B1:
     srli  a1,a1,1
     andi  a4,a1,1
-    beqz  a4, HALF_B
-SUB:
-    sub   a4,a5,a1
-    bgeu  a1,a5, NO_SWAP
-    mv    a5,a1
-    mv    a1,a4
-    j     HALF_B
+    beqz  a4, HALF_B1
+SUB1:
+    bltu  a1,a5, SWAP1
+    sub   a1,a1,a5
+    bnez  a1, HALF_B1
+    sll   a0,a5,a0
+    ret
+SWAP1:
+    sub   a5,a5,a1
+
+HALF_B2:
+    srli  a5,a5,1
+    andi  a4,a5,1
+    beqz  a4, HALF_B2
+    bltu  a5,a1, SWAP2
+    sub   a5,a5,a1
+    bnez  a5, HALF_B2
+    sll   a0,a1,a0
+    ret
+SWAP2:
+    sub   a1,a1,a5
+    j     HALF_B1
+
 RET_B:
     mv    a0,a1
 RET:
-    ret
-NO_SWAP:
-    sub   a1,a1,a5
-    bnez  a1, HALF_B
-    sll   a0,a5,a0
     ret
 SHIFT0:
     li    a0,0
