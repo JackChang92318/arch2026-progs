@@ -2,11 +2,6 @@
 
 #include <stdint.h>
 
-/* Quarter-turn transition tables, generated on the host from the cube
- * model of rubik.c: perm_turn[f][r] is the permutation rank after a
- * clockwise quarter turn of face f (R, B, D) of a cube whose permutation
- * rank is r, and ori_turn[f][r] the same for the orientation rank.
- */
 static const uint16_t perm_turn[3][5040] = {
     /* R */
     {
